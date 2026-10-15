@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="ms" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi Pahlawan Ilmu - UASA Pendidikan Islam Tahun 3 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #11998e 100%);
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .font-jawi {
+            font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+            direction: rtl;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(12px);
+            border: 3px solid rgba(255, 215, 0, 0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .gold-border {
+            border: 3px solid #f1c40f;
+        }
+
+        /* Interactive Animations */
+        .btn-bounce {
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.15s;
+        }
+
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(241, 196, 15, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(241, 196, 15, 1); }
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+
+        /* Drag and Drop styling */
+        .draggable-item {
+            touch-action: none;
+            cursor: grab;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 10px;
+        }
+
+        /* Floating elements animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .floating-avatar {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Fix for disabled button opacity while preserving text visibility */
+        .btn-option-disabled {
+            opacity: 0.85 !important;
+            cursor: not-allowed !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden">
+
+    <header class="w-full bg-slate-900/80 backdrop-filter blur-md text-white px-4 py-3 sticky top-0 z-50 flex justify-between items-center border-b-2 border-amber-400">
+        <div class="flex items-center space-x-2">
+            <span class="text-2xl">✨</span>
+            <h1 class="font-bold text-lg md:text-xl text-amber-300 tracking-wide">Pahlawan Ilmu T3</h1>
+        </div>
+        <div class="flex items-center space-x-2 md:space-x-4">
+            <div id="playerBadge" class="hidden bg-emerald-600/80 px-3 py-1 rounded-full text-xs md:text-sm font-semibold flex items-center gap-1 border border-emerald-400">
+                <i class="fas fa-user-ninja text-amber-300"></i> <span id="headerPlayerName">Pahlawan</span>
+            </div>
+            <button id="btnToggleMusic" onclick="toggleMusic()" class="p-2 bg-slate-700 hover:bg-slate-600 rounded-full w-10 h-10 flex items-center justify-center text-amber-400 border border-slate-500 transition" title="Bunyi">
+                <i class="fas fa-music" id="iconMusic"></i>
+            </button>
+            <button id="btnToggleSpeech" onclick="toggleSpeech()" class="p-2 bg-slate-700 hover:bg-slate-600 rounded-full w-10 h-10 flex items-center justify-center text-emerald-400 border border-slate-500 transition" title="Sebutan Suara">
+                <i class="fas fa-volume-up" id="iconSpeech"></i>
+            </button>
+            <button onclick="showHelpModal()" class="p-2 bg-blue-600 hover:bg-blue-500 rounded-full w-10 h-10 flex items-center justify-center text-white border border-blue-400 transition" title="Panduan">
+                <i class="fas fa-question-circle"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="container mx-auto px-4 py-6 max-w-4xl flex-grow flex flex-col justify-center">
+
+        <div id="screenMenu" class="glass-card rounded-3xl p-6 md:p-10 text-center relative overflow-hidden transition-all duration-300">
+            <div class="floating-avatar my-2 flex justify-center space-x-4">
+                <span class="text-6xl">🧕</span>
+                <span class="text-6xl">👳‍♂️</span>
+            </div>
+            <h2 class="text-3xl md:text-5xl font-extrabold text-indigo-900 mb-2 drop-shadow">MISI PAHLAWAN ILMU</h2>
+            <p class="text-emerald-700 font-bold text-base md:text-lg mb-6">UASA PENDIDIKAN ISLAM TAHUN 3 (2026)</p>
+
+            <div class="max-w-md mx-auto space-y-4 mb-8 bg-white/70 p-5 rounded-2xl border border-indigo-100">
+                <div>
+                    <label class="block text-left text-xs font-bold text-slate-600 uppercase mb-1">Nama Pahlawan Muda:</label>
+                    <input type="text" id="inputPlayerName" placeholder="Masukkan nama kamu..." class="w-full px-4 py-3 rounded-xl border-2 border-indigo-200 focus:border-indigo-500 focus:outline-none text-center font-bold text-lg text-slate-800">
+                </div>
+                <div>
+                    <label class="block text-left text-xs font-bold text-slate-600 uppercase mb-1">Kelas:</label>
+                    <input type="text" id="inputPlayerClass" placeholder="Contoh: 3 Cemerlang" class="w-full px-4 py-3 rounded-xl border-2 border-indigo-200 focus:border-indigo-500 focus:outline-none text-center font-bold text-lg text-slate-800">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
+                <button onclick="startNewGame()" class="btn-bounce bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold py-4 px-6 rounded-2xl text-xl shadow-lg flex items-center justify-center gap-2 border-b-4 border-teal-800">
+                    <i class="fas fa-play text-amber-300"></i> MULA BERMAIN
+                </button>
+                <button id="btnResume" onclick="resumeGame()" class="btn-bounce bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold py-4 px-6 rounded-2xl text-xl shadow-lg flex items-center justify-center gap-2 border-b-4 border-orange-800 opacity-50 cursor-not-allowed" disabled>
+                    <i class="fas fa-redo text-yellow-200"></i> SAMBUNG
+                </button>
+            </div>
+
+            <div class="mt-6 flex justify-center gap-4 text-sm font-semibold text-slate-600">
+                <button onclick="showHelpModal()" class="hover:text-indigo-700 underline"><i class="fas fa-book"></i> Cara Bermain</button>
+                <button onclick="confirmResetData()" class="hover:text-red-600 underline"><i class="fas fa-trash-alt"></i> Reset Data</button>
+            </div>
+        </div>
+
+        <div id="screenLevelMap" class="hidden glass-card rounded-3xl p-6 text-center transition-all duration-300">
+            <div class="flex justify-between items-center mb-6 bg-indigo-900/90 text-white p-4 rounded-2xl border border-amber-400">
+                <div class="text-left">
+                    <p class="text-xs text-amber-300 font-bold">PAHLAWAN ILMU</p>
+                    <h3 id="mapPlayerInfo" class="text-lg font-extrabold">Ahmad (3 Bestari)</h3>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-amber-300 font-bold">JUMLAH MATA</p>
+                    <p id="mapTotalScore" class="text-2xl font-black text-yellow-300">0 / 500</p>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-indigo-950 mb-2">PETA MISI ILMU</h3>
+            <p class="text-slate-600 text-sm mb-6">Selesaikan setiap tahap untuk membuka tahap berikutnya!</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6" id="levelGrid">
+                <!-- Dynamic Level Cards -->
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button onclick="showScreen('screenMenu')" class="btn-bounce bg-slate-600 hover:bg-slate-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm">
+                    <i class="fas fa-arrow-left mr-1"></i> Kembali ke Menu
+                </button>
+                <button id="btnViewFinalResultsFromMap" onclick="showFinalResultsScreen()" class="hidden btn-bounce bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 px-6 rounded-xl text-sm">
+                    <i class="fas fa-trophy mr-1"></i> Keputusan & Sijil
+                </button>
+            </div>
+        </div>
+
+        <div id="screenGame" class="hidden glass-card rounded-3xl p-5 md:p-8 transition-all duration-300 relative">
+            
+            <!-- Top Status Bar -->
+            <div class="flex flex-wrap justify-between items-center mb-4 gap-2 bg-slate-100 p-3 rounded-2xl border border-slate-200">
+                <div class="flex items-center space-x-2">
+                    <span id="levelBadgeIcon" class="text-2xl">🕌</span>
+                    <div>
+                        <p id="gameLevelTitle" class="text-xs font-bold text-slate-500 uppercase">Tahap 1</p>
+                        <p id="gameCategoryName" class="text-sm md:text-base font-extrabold text-indigo-900">Akhlak dan Adab</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-center">
+                        <p class="text-xs text-slate-500 font-bold">SOALAN</p>
+                        <p id="gameProgressText" class="text-sm font-extrabold text-blue-700">1 / 8</p>
+                    </div>
+                    <div class="text-center bg-amber-100 px-3 py-1 rounded-xl border border-amber-300">
+                        <p class="text-xs text-amber-800 font-bold">SKOR TAHAP</p>
+                        <p id="gameCurrentScore" class="text-base font-black text-amber-600">0 / 80</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden mb-6">
+                <div id="progressBar" class="bg-gradient-to-r from-emerald-400 to-teal-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="bg-white rounded-2xl p-5 md:p-6 mb-6 shadow-inner border-2 border-indigo-100 relative">
+                <div class="flex justify-between items-start mb-2">
+                    <span id="questionTypeBadge" class="bg-indigo-100 text-indigo-800 text-xs font-extrabold px-3 py-1 rounded-full border border-indigo-200">Pilihan Jawapan</span>
+                    <button onclick="speakQuestionText()" class="text-indigo-600 hover:text-indigo-800 text-lg p-1" title="Baca Soalan">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+                
+                <p id="questionPromptRumi" class="text-base md:text-xl font-bold text-slate-800 mb-2 leading-relaxed"></p>
+                <p id="questionPromptJawi" class="font-jawi text-xl md:text-2xl text-indigo-950 font-bold my-3 text-right leading-loose border-t border-slate-100 pt-2 hidden"></p>
+            </div>
+
+            <!-- Dynamic Interactive Area -->
+            <div id="interactiveArea" class="mb-6 min-h-[180px] flex flex-col justify-center">
+                <!-- Dynamic Content Injected Here -->
+            </div>
+
+            <!-- Immediate Feedback Overlay -->
+            <div id="feedbackCard" class="hidden rounded-2xl p-4 mb-4 text-center border-2 transition-all duration-200">
+                <p id="feedbackTitle" class="font-extrabold text-lg mb-1"></p>
+                <p id="feedbackText" class="text-sm md:text-base font-semibold"></p>
+            </div>
+
+            <!-- Action Buttons Footer -->
+            <div class="flex justify-between items-center">
+                <button onclick="quitToMap()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-4 rounded-xl text-sm transition">
+                    <i class="fas fa-map-marked-alt mr-1"></i> Peta Misi
+                </button>
+                <button id="btnNextQuestion" onclick="nextQuestion()" class="hidden btn-bounce bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold py-3 px-8 rounded-xl text-base shadow-lg border-b-4 border-teal-800">
+                    Seterusnya <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="screenLevelComplete" class="hidden glass-card rounded-3xl p-6 md:p-10 text-center transition-all duration-300">
+            <div class="text-6xl mb-3 animate-bounce" id="levelCompleteEmoji">🏆</div>
+            <h2 class="text-3xl font-black text-indigo-950 mb-1">TAHNIAH PAHLAWAN!</h2>
+            <p id="levelCompleteSubtext" class="text-emerald-700 font-bold text-lg mb-6">Kamu telah menamatkan Tahap Ini!</p>
+
+            <div class="bg-white/80 rounded-2xl p-6 max-w-md mx-auto mb-6 border border-amber-200 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                    <span class="text-slate-600 font-bold">Lencana Diperoleh:</span>
+                    <span id="badgeEarnedDisplay" class="font-extrabold text-indigo-900 text-lg">🥇 Lencana Adab</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                    <span class="text-slate-600 font-bold">Markah Tahap Ini:</span>
+                    <span id="levelScoreDisplay" class="font-black text-emerald-600 text-xl">80 / 80</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-600 font-bold">Jumlah Skor Keseluruhan:</span>
+                    <span id="totalScoreDisplay" class="font-black text-amber-600 text-xl">150 / 500</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+                <button onclick="goToNextLevelOrFinish()" class="btn-bounce bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold py-3 px-6 rounded-xl text-lg shadow-md border-b-4 border-teal-800">
+                    Teruskan Misi <i class="fas fa-chevron-right ml-1"></i>
+                </button>
+                <button onclick="showScreen('screenLevelMap')" class="btn-bounce bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-6 rounded-xl text-lg">
+                    Kembali ke Peta
+                </button>
+            </div>
+        </div>
+
+        <div id="screenFinalResults" class="hidden glass-card rounded-3xl p-4 md:p-8 transition-all duration-300">
+            <div class="text-center mb-6">
+                <h2 class="text-3xl md:text-4xl font-black text-amber-500 mb-1 drop-shadow">KAPAL KEJAYAAN PAHLAWAN!</h2>
+                <p class="text-slate-600 font-bold">Tahniah! Kamu telah menyelesaikan Pentaksiran UASA Pendidikan Islam 2026!</p>
+            </div>
+
+            <!-- Score Summary Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 max-w-2xl mx-auto">
+                <div class="bg-emerald-100 p-3 rounded-2xl border border-emerald-300 text-center">
+                    <p class="text-xs font-bold text-emerald-800">JUMLAH MARKAH</p>
+                    <p id="finalScoreText" class="text-2xl font-black text-emerald-700">0 / 500</p>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-2xl border border-blue-300 text-center">
+                    <p class="text-xs font-bold text-blue-800">PERATUS</p>
+                    <p id="finalPercentageText" class="text-2xl font-black text-blue-700">0%</p>
+                </div>
+                <div class="bg-teal-100 p-3 rounded-2xl border border-teal-300 text-center">
+                    <p class="text-xs font-bold text-teal-800">SOALAN BETUL</p>
+                    <p id="finalCorrectText" class="text-2xl font-black text-teal-700">0 / 50</p>
+                </div>
+                <div class="bg-purple-100 p-3 rounded-2xl border border-purple-300 text-center">
+                    <p class="text-xs font-bold text-purple-800">PANGKAT</p>
+                    <p id="finalRankText" class="text-sm font-black text-purple-800 mt-1">Pahlawan Mumtaz</p>
+                </div>
+            </div>
+
+            <!-- Certificate Container -->
+            <div id="certificateContainer" class="bg-amber-50 rounded-2xl p-6 md:p-8 gold-border text-center shadow-2xl relative overflow-hidden my-6 border-8 border-amber-400">
+                <div class="border-4 border-dashed border-amber-600/40 p-4 md:p-6 rounded-xl">
+                    <div class="flex justify-between items-center mb-4 text-amber-800">
+                        <span class="text-3xl">🕌</span>
+                        <p class="font-bold text-xs md:text-sm tracking-widest uppercase">SIJIL PENCAPAIAN DIGITAL UASA 2026</p>
+                        <span class="text-3xl">⭐</span>
+                    </div>
+
+                    <h3 class="font-serif font-extrabold text-2xl md:text-4xl text-indigo-950 mb-2">SIJIL PAHLAWAN ILMU</h3>
+                    <p class="text-slate-600 text-xs md:text-sm italic mb-4">Dengan ini diperakukan bahawa:</p>
+
+                    <h4 id="certPlayerName" class="text-2xl md:text-3xl font-black text-emerald-700 underline decoration-amber-400 mb-1">Ahmad Bin Ali</h4>
+                    <p id="certPlayerClass" class="text-sm md:text-base font-bold text-slate-700 mb-4">Kelas: 3 Cemerlang</p>
+
+                    <p class="text-xs md:text-sm text-slate-700 max-w-lg mx-auto leading-relaxed mb-6">
+                        Telah berjaya menyelesaikan <strong>50 Soalan Pentaksiran Pendidikan Islam Tahun 3 (UASA 2026)</strong> dengan pencapaian cemerlang dalam Akidah, Ibadah, Sirah, Al-Quran, Tajwid, Akhlak, dan Jawi.
+                    </p>
+
+                    <div class="flex justify-around items-center border-t border-amber-300 pt-4 text-left">
+                        <div>
+                            <p class="text-xs text-slate-500 font-bold">GRED & MARKAH</p>
+                            <p id="certScoreDisplay" class="text-lg md:text-xl font-black text-indigo-900">480 / 500 (96%)</p>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-4xl">🏅</span>
+                            <p id="certBadgeTitle" class="text-xs font-bold text-amber-800">PAHLAWAN MUMTAZ</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-slate-500 font-bold">TARIKH</p>
+                            <p id="certDateDisplay" class="text-xs md:text-sm font-bold text-slate-800">15 Oktober 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons for Save & Share -->
+            <div class="flex flex-wrap justify-center gap-3 max-w-xl mx-auto">
+                <button onclick="downloadCertificate()" class="btn-bounce bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 px-5 rounded-xl text-sm flex items-center gap-2 shadow">
+                    <i class="fas fa-download"></i> Simpan Sijil (PNG)
+                </button>
+                <button onclick="shareResults()" class="btn-bounce bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 px-5 rounded-xl text-sm flex items-center gap-2 shadow">
+                    <i class="fas fa-share-alt"></i> Kongsi Keputusan
+                </button>
+                <button onclick="showScreen('screenLevelMap')" class="btn-bounce bg-slate-600 hover:bg-slate-700 text-white font-extrabold py-3 px-5 rounded-xl text-sm flex items-center gap-2 shadow">
+                    <i class="fas fa-map-marked-alt"></i> Peta Misi
+                </button>
+                <button onclick="restartEntireGame()" class="btn-bounce bg-amber-500 hover:bg-amber-600 text-white font-extrabold py-3 px-5 rounded-xl text-sm flex items-center gap-2 shadow">
+                    <i class="fas fa-redo"></i> Main Semula
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="modalLevelAction" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 relative shadow-2xl border-4 border-amber-400 text-center">
+            <span class="text-5xl mb-2 inline-block" id="modalLevelIcon">🕌</span>
+            <h3 id="modalLevelTitle" class="text-2xl font-black text-indigo-950 mb-1">Tahap 1: Akhlak</h3>
+            <p class="text-slate-600 text-sm mb-4">Tahap ini telah selesai. Sila pilih tindakan kamu:</p>
+            
+            <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 mb-5">
+                <p class="text-xs font-bold text-amber-800">MARKAH REKOD TAHAP</p>
+                <p id="modalLevelScore" class="text-xl font-black text-amber-600">80 / 80</p>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="viewLevelSummary()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm shadow btn-bounce flex items-center justify-center gap-2">
+                    <i class="fas fa-eye"></i> LIHAT KEPUTUSAN TAHAP
+                </button>
+                <button onclick="startLevelReplay()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm shadow btn-bounce flex items-center justify-center gap-2">
+                    <i class="fas fa-redo"></i> MAIN SEMULA TAHAP
+                </button>
+                <button onclick="closeLevelModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-xl text-xs">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HELP / CARA BERMAIN MODAL -->
+    <div id="modalHelp" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 relative shadow-2xl border-4 border-amber-400">
+            <button onclick="closeHelpModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            <div class="text-center mb-4">
+                <span class="text-4xl">📜</span>
+                <h3 class="text-2xl font-black text-indigo-950">Cara Bermain</h3>
+            </div>
+            <div class="space-y-3 text-sm text-slate-700 max-h-[60vh] overflow-y-auto pr-2">
+                <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
+                    <p class="font-bold text-amber-900">1. Daftar Nama & Kelas</p>
+                    <p class="text-xs text-amber-800">Isi nama pahlawan kamu untuk dicetak pada Sijil Digital nanti.</p>
+                </div>
+                <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+                    <p class="font-bold text-emerald-900">2. Meneroka 6 Tahap Utama</p>
+                    <p class="text-xs text-emerald-800">Selesaikan soalan mengikut bidang: Akhlak, Akidah, Ibadah, Sirah, Al-Quran & Tajwid, serta Jawi.</p>
+                </div>
+                <div class="p-3 bg-blue-50 rounded-xl border border-blue-200">
+                    <p class="font-bold text-blue-900">3. Jenis Permainan Pelbagai</p>
+                    <p class="text-xs text-blue-800">Jawab soalan pilihan A/B/C/D, Betul/Salah, Padankan Pasangan, Kelaskan Jawapan, dan Susun Perkataan!</p>
+                </div>
+                <div class="p-3 bg-purple-50 rounded-xl border border-purple-200">
+                    <p class="font-bold text-purple-900">4. Markah & Lencana</p>
+                    <p class="text-xs text-purple-800">Setiap jawapan betul memberi 10 mata. Satu soalan unik hanya memberi markah sekali sahaja!</p>
+                </div>
+            </div>
+            <button onclick="closeHelpModal()" class="w-full mt-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl">Faham, Mula Bermain!</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-3 text-xs text-slate-300 bg-slate-900/60 backdrop-blur-sm border-t border-slate-800">
+        Pendidikan Islam Tahun 3 UASA 2026 &copy; SK Abdul Rahman Yassin | Dibina untuk Pahlawan Ilmu
+    </footer>
+
+    <script>
+        
+        const questionBank = [
+            // ----------------------------------------------------------------------
+            // TAHAP 1: AKHLAK DAN ADAB (8 Soalan)
+            // ----------------------------------------------------------------------
+            {
+                id: 1,
+                level: 1,
+                type: "mcq",
+                promptRumi: "Apakah maksud perkataan 'كَبِيرَنَا' (kabirana) di dalam hadis adab mengasihi?",
+                promptJawi: "فركاتاون بركاريس ددالم حديث دأتس برمقصود",
+                options: [
+                    "Orang yang lebih tua",
+                    "Orang yang lebih muda",
+                    "Orang yang lebih pandai",
+                    "Orang yang lebih kaya"
+                ],
+                correctAnswer: 0,
+                explanation: "'كَبِيرَنَا' bermaksud orang yang lebih tua dalam hadis Nabi Muhammad SAW."
+            },
+            {
+                id: 2,
+                level: 1,
+                type: "mcq",
+                promptRumi: "Antara berikut, manakah adab mengasihi orang yang lebih tua yang betul?",
+                promptJawi: "انتارا برايكوت, ماناکه ادب مموليا كن اورغ يغ لبيه توا يع بتول؟",
+                options: [
+                    "Bercakap dengan kasar",
+                    "Sentiasa bersedia untuk membantu",
+                    "Memanggil dengan panggilan biadab",
+                    "Ingkar kepada arahan mereka"
+                ],
+                correctAnswer: 1,
+                explanation: "Sentiasa bersedia membantu adalah adab terpuji terhadap orang tua."
+            },
+            {
+                id: 3,
+                level: 1,
+                type: "mcq",
+                promptRumi: "Seorang nenek sedang berdiri di dalam bas kerana tempat duduk penuh. Apakah tindakan mulia kamu?",
+                promptJawi: "جک اندا مليهت سيتواسي دأتس, اقاكه تيندا كن موليا يع اكن اندا لاكوكن؟",
+                options: [
+                    "Berpura-pura tidur",
+                    "Meminta nenek bersabar",
+                    "Menyuruh nenek keluar bas",
+                    "Menawarkan tempat duduk kepada nenek"
+                ],
+                correctAnswer: 3,
+                explanation: "Menawarkan tempat duduk adalah tanda menghormati dan mengasihi warga emas."
+            },
+            {
+                id: 4,
+                level: 1,
+                type: "mcq",
+                promptRumi: "Antara gambar berikut, manakah tindakan yang BUKAN amalan sunnah seharian?",
+                promptJawi: "انتارا برايكوت, فيليه فركارا بوكن سنة.",
+                options: [
+                    "Menggosok gigi sebelum tidur",
+                    "Mengutamakan anggota kanan",
+                    "Makan berlebihan sehingga terlalu kenyang",
+                    "Menjaga kebersihan diri"
+                ],
+                correctAnswer: 2,
+                explanation: "Makan secara berlebihan bukan sunnah Nabi SAW."
+            },
+            {
+                id: 5,
+                level: 1,
+                type: "mcq",
+                promptRumi: "Aisyah sering dijangkiti penyakit HFMD. Apakah sunnah yang sesuai diamalkan untuk mengelakkannya?",
+                promptJawi: "افاكه فركارا سنة يغ سسواي عائشة عملكن؟",
+                options: [
+                    "Mengasihi ibu bapa",
+                    "Menjaga kebersihan diri",
+                    "Bercakap perkara yang baik",
+                    "Utamakan anggota kanan"
+                ],
+                correctAnswer: 1,
+                explanation: "Kebersihan adalah sebahagian daripada iman dan sunnah penting."
+            },
+            {
+                id: 6,
+                level: 1,
+                type: "mcq",
+                promptRumi: "Aktiviti manakah paling sesuai bagi memupuk semangat cintakan sunnah Rasulullah SAW?",
+                promptJawi: "اكتيويتي ماناكه فاليع سسواي باكي مموثوق سماعت چينتاكن سنة رسول الله؟",
+                options: [
+                    "Pesta buku dan komik",
+                    "Kempen kitar semula",
+                    "Minggu Sains dan Teknologi",
+                    "Karnival makanan dan sukan sunnah"
+                ],
+                correctAnswer: 3,
+                explanation: "Karnival makanan dan sukan sunnah menyebarkan amalan sunnah secara amali."
+            },
+            {
+                id: 7,
+                level: 1,
+                type: "true_false",
+                promptRumi: "Adab bercakap dengan rakan sebaya mestilah menggunakan bahasa yang sopan dan tidak menyakiti hati.",
+                promptJawi: "ادب برچاكف دغن راكن ممغقوناكن بهاس سوقن.",
+                correctAnswer: true,
+                explanation: "Berbicara santun dan sopan adalah tuntutan akhlak Islam."
+            },
+            {
+                id: 8,
+                level: 1,
+                type: "true_false",
+                promptRumi: "Menderhaka dan memarahi orang tua adalah amalan yang amat disukai oleh Allah SWT.",
+                promptJawi: "مندرهاك كفد اورغ توا دسوغكاي الله.",
+                correctAnswer: false,
+                explanation: "Islam melarang perbuatan derhaka dan memarahi ibu bapa."
+            },
+
+            // ----------------------------------------------------------------------
+            // TAHAP 2: AKIDAH (8 Soalan)
+            // ----------------------------------------------------------------------
+            {
+                id: 9,
+                level: 2,
+                type: "mcq",
+                promptRumi: "Nama Allah 'Al-Alim' (العليم) bermaksud Allah Maha ______ setiap sesuatu dengan terperinci.",
+                promptJawi: "العليم برمقصود الله مها ______ ستياف سسواتو دغن ترفرينجي.",
+                options: [
+                    "Mengetahui",
+                    "Mencipta",
+                    "Menyembunyikan",
+                    "Mentadbir"
+                ],
+                correctAnswer: 0,
+                explanation: "Al-Alim bermaksud Allah Maha Mengetahui segala sesuatu."
+            },
+            {
+                id: 10,
+                level: 2,
+                type: "mcq",
+                promptRumi: "Antara pernyataan berikut mengenai sifat ilmu Allah, manakah yang BETUL?",
+                promptJawi: "انتارا برايكوت يغ ماناكه بتول تينتغ علمو الله؟",
+                options: [
+                    "Ilmu manusia lebih banyak daripada ilmu Allah",
+                    "Allah memerlukan pembantu untuk mentadbir alam",
+                    "Ilmu dan kebijaksanaan Allah tidak terbatas",
+                    "Manusia mengetahui perkara ghaib tersembunyi"
+                ],
+                correctAnswer: 2,
+                explanation: "Ilmu Allah adalah infiniti dan tidak terbatas."
+            },
+            {
+                id: 11,
+                level: 2,
+                type: "mcq",
+                promptRumi: "Hakim malu bertanya kerana bimbang diejek. Bagaimanakah keimanan kepada Allah Al-Alim dapat membantunya?",
+                promptJawi: "باكايماناكه كأيمانن كقد الله العليم داقت ممبنتو حاكيم دالم فلاجرن؟",
+                options: [
+                    "Mengharapkan bantuan rakan sahaja",
+                    "Berani mencuba dan berusaha menuntut ilmu",
+                    "Bercakap apabila ditanya sahaja",
+                    "Menjawab soalan tanpa berfikir"
+                ],
+                correctAnswer: 1,
+                explanation: "Beriman kepada Al-Alim mendorong kita rajin dan berani menuntut ilmu."
+            },
+            {
+                id: 12,
+                level: 2,
+                type: "true_false",
+                promptRumi: "Umat Islam wajib beriman dengan semua Kitab-Kitab Allah yang diturunkan.",
+                promptJawi: "اومت إسلام واجب برايمان دغن كتاب ۲ الله.",
+                correctAnswer: true,
+                explanation: "Beriman kepada Kitab merupakan Rukun Iman yang ke-3."
+            },
+            {
+                id: 13,
+                level: 2,
+                type: "true_false",
+                promptRumi: "Kitab Injil diturunkan kepada Nabi Muhammad SAW.",
+                promptJawi: "كتاب إنجيل دتورونكن كقد نبي محمد.",
+                correctAnswer: false,
+                explanation: "Kitab Injil diturunkan kepada Nabi Isa AS, manakala Al-Quran diturunkan kepada Nabi Muhammad SAW."
+            },
+            {
+                id: 14,
+                level: 2,
+                type: "true_false",
+                promptRumi: "Orang yang beriman dengan Kitab Allah akan sentiasa hidup dalam kesesatan.",
+                promptJawi: "اورغ يغ برایمان دغن كتاب الله اکن هيدوف دالم كسستن.",
+                correctAnswer: false,
+                explanation: "Beriman kepada kitab Allah memberikan petunjuk dan hidayah, bukannya kesesatan."
+            },
+            {
+                id: 15,
+                level: 2,
+                type: "mcq",
+                promptRumi: "Kitab Al-Quran merupakan kitab suci yang diturunkan sebagai mukjizat terakhir kepada...",
+                promptJawi: "كتاب القرءان دتورونكن كفد...",
+                options: [
+                    "Nabi Musa AS",
+                    "Nabi Isa AS",
+                    "Nabi Daud AS",
+                    "Nabi Muhammad SAW"
+                ],
+                correctAnswer: 3,
+                explanation: "Al-Quran diturunkan kepada Nabi Muhammad SAW."
+            },
+            {
+                id: 16,
+                level: 2,
+                type: "mcq",
+                promptRumi: "Antara berikut, yang manakah merupakan cara menzahirkan sifat bersyukur kepada Allah?",
+                promptJawi: "پاتاکن ساتو چارا برشكور كقد الله.",
+                options: [
+                    "Sentiasa merungut",
+                    "Membaca Al-Quran dan rajin beribadah",
+                    "Membazir makanan",
+                    "Meninggalkan solat"
+                ],
+                correctAnswer: 1,
+                explanation: "Membaca Al-Quran dan bersedekah adalah bukti kesyukuran hamba."
+            },
+
+            // ----------------------------------------------------------------------
+            // TAHAP 3: IBADAH (10 Soalan)
+            // ----------------------------------------------------------------------
+            {
+                id: 17,
+                level: 3,
+                type: "mcq",
+                promptRumi: "Antara perkara berikut, manakah yang TIDAK dilarang ketika seseorang berhadas besar?",
+                promptJawi: "انتارا برايكوت, ماناکه فركارا يع تيدق دلارغ كتيك برحدث بسر؟",
+                options: [
+                    "Membaca Al-Quran",
+                    "Berada di dalam masjid",
+                    "Makan dan minum",
+                    "Melakukan solat"
+                ],
+                correctAnswer: 2,
+                explanation: "Makan dan minum tidak dilarang ketika berhadas besar."
+            },
+            {
+                id: 18,
+                level: 3,
+                type: "mcq",
+                promptRumi: "Situasi perbuatan solat yang manakah TIDAK membatalkan solat?",
+                promptJawi: "سيتواسي صلاة يع ماناكه تيدق تربطل؟",
+                options: [
+                    "Nora bergurau dengan rakannya semasa solat",
+                    "Nabil terkentut ketika rukuk",
+                    "Ahmad menggaru sikunya sebanyak dua kali berturut-turut",
+                    "Amin menelan sisa makanan di giginya"
+                ],
+                correctAnswer: 2,
+                explanation: "Bergerak berturut-turut kurang daripada 3 kali tidak membatalkan solat."
+            },
+            {
+                id: 19,
+                level: 3,
+                type: "mcq",
+                promptRumi: "Berikut ialah usaha mengelakkan perkara yang membatalkan solat KECUALI...",
+                promptJawi: "برايكوت اياله اوسها معيلقكن قركارا يع ممبطلكن صلاة كجوالي",
+                options: [
+                    "Solat di tempat yang bising dan terganggu",
+                    "Solat di awal waktu",
+                    "Solat di tempat yang bersih dan suci",
+                    "Solat dengan tenang dan khusyuk"
+                ],
+                correctAnswer: 0,
+                explanation: "Solat di tempat bising boleh mengganggu khusyuk dan tidak digalakkan."
+            },
+            {
+                id: 20,
+                level: 3,
+                type: "categorize",
+                promptRumi: "Kelaskan amalan solat berikut: 'Membaca Doa Qunut' tergolong dalam...",
+                promptJawi: "كلسكن: ممباچ دعاء قنوت",
+                options: [
+                    "Perkara Sunat Ab'ad",
+                    "Perkara Sunat Hai'at"
+                ],
+                correctAnswer: 0,
+                explanation: "Doa Qunut adalah Sunat Ab'ad (dituntut sujud sahwi jika ditinggalkan)."
+            },
+            {
+                id: 21,
+                level: 3,
+                type: "categorize",
+                promptRumi: "Kelaskan amalan solat berikut: 'Membaca Doa Iftitah' tergolong dalam...",
+                promptJawi: "كلسكن: ممباچ دعاء افتتاح",
+                options: [
+                    "Perkara Sunat Hai'at",
+                    "Perkara Sunat Ab'ad"
+                ],
+                correctAnswer: 0,
+                explanation: "Membaca Doa Iftitah tergolong dalam Sunat Hai'at."
+            },
+            {
+                id: 22,
+                level: 3,
+                type: "categorize",
+                promptRumi: "Kelaskan amalan solat berikut: 'Duduk Tahiyat Awal' tergolong dalam...",
+                promptJawi: "كلسكن: دودوق تحية اول",
+                options: [
+                    "Perkara Sunat Ab'ad",
+                    "Perkara Sunat Hai'at"
+                ],
+                correctAnswer: 0,
+                explanation: "Duduk dan membaca Tahiyat Awal tergolong dalam Sunat Ab'ad."
+            },
+            {
+                id: 23,
+                level: 3,
+                type: "categorize",
+                promptRumi: "Kelaskan amalan solat berikut: 'Melihat ke tempat sujud' tergolong dalam...",
+                promptJawi: "كلسكن: مليهت كتمقت سجود",
+                options: [
+                    "Perkara Sunat Hai'at",
+                    "Perkara Sunat Ab'ad"
+                ],
+                correctAnswer: 0,
+                explanation: "Melihat tempat sujud adalah Sunat Hai'at dalam solat."
+            },
+            {
+                id: 24,
+                level: 3,
+                type: "categorize",
+                promptRumi: "Kelaskan amalan solat berikut: 'Memberi salam kedua' tergolong dalam...",
+                promptJawi: "كلسكن: ممبري سلام كدوا",
+                options: [
+                    "Perkara Sunat Hai'at",
+                    "Perkara Sunat Ab'ad"
+                ],
+                correctAnswer: 0,
+                explanation: "Salam pertama adalah Rukun, manakala salam kedua adalah Sunat Hai'at."
+            },
+            {
+                id: 25,
+                level: 3,
+                type: "true_false",
+                promptRumi: "Bersuci daripada hadas kecil cukuplah sekadar dengan berwuduk.",
+                promptJawi: "برسوچي درفد حدث كچيل كوقوف دغن بروضوء.",
+                correctAnswer: true,
+                explanation: "Hadas kecil disucikan dengan wuduk atau tayammum."
+            },
+            {
+                id: 26,
+                level: 3,
+                type: "mcq",
+                promptRumi: "Rukun solat wajib dilaksanakan. Berapakah jumlah Rukun Solat keseluruhannya?",
+                promptJawi: "برفاكه جومله روكون صلاة؟",
+                options: [
+                    "13 Rukun",
+                    "10 Rukun",
+                    "5 Rukun",
+                    "15 Rukun"
+                ],
+                correctAnswer: 0,
+                explanation: "Rukun solat ada 13 perkara."
+            },
+
+            // ----------------------------------------------------------------------
+            // TAHAP 4: SIRAH DAN SUNNAH (8 Soalan)
+            // ----------------------------------------------------------------------
+            {
+                id: 27,
+                level: 4,
+                type: "mcq",
+                promptRumi: "Pada peringkat awal Islam, Nabi Muhammad SAW mula berdakwah secara rahsia kepada...",
+                promptJawi: "نبي محمد مولا بردعوه سجارا رهسيا كقد ______ دغن بكيندا.",
+                options: [
+                    "Orang yang rapat / keluarga terdekat",
+                    "Orang yang jauh",
+                    "Orang yang memusuhi",
+                    "Raja yang zalim"
+                ],
+                correctAnswer: 0,
+                explanation: "Dakwah rahsia ditujukan kepada ahli keluarga dan sahabat rapat."
+            },
+            {
+                id: 28,
+                level: 4,
+                type: "mcq",
+                promptRumi: "Apakah cabaran hebat selepas Nabi Muhammad SAW berdakwah secara terang-terangan di Bukit Safa?",
+                promptJawi: "اقاكه چابرن سلفس نبي محمد بردعوه كقد قندودوق مكة دأتس بوكيت صفا؟",
+                options: [
+                    "Keluarga Nabi dipulaukan dan ditentang kafir Quraisy",
+                    "Nabi dilantik menjadi raja Mekah",
+                    "Abu Lahab terus memeluk Islam",
+                    "Baginda diberi hadiah emas"
+                ],
+                correctAnswer: 0,
+                explanation: "Kafir Quraisy bertindak menentang dan memulaukan Bani Hashim."
+            },
+            {
+                id: 29,
+                level: 4,
+                type: "mcq",
+                promptRumi: "Penduduk Taif menolak dakwah dan melontar batu. Bagaimanakah Nabi menunjukkkan sifat cekal?",
+                promptJawi: "باكايماناكه نبي محمد منونجوقكن صيفت چکل بردعوه دالم قريستيوا دأتس؟",
+                options: [
+                    "Memaafkan dan mendoakan kebaikan penduduk Taif",
+                    "Berhenti berdakwah selamanya",
+                    "Membalas serangan dengan kekerasan",
+                    "Mendoakan kehancuran Taif"
+                ],
+                correctAnswer: 0,
+                explanation: "Baginda memaafkan penduduk Taif dan bersabar menghadapi tentangan."
+            },
+            {
+                id: 30,
+                level: 4,
+                type: "mcq",
+                promptRumi: "Masyarakat Arab Jahiliyah sebelum kedatangan Islam menyekutukan Allah dengan menyembah...",
+                promptJawi: "مشارکت عرب جاهيلية ميكوتوكن الله دغن ميمبه...",
+                options: [
+                    "Berhala",
+                    "Malaikat",
+                    "Bintang",
+                    "Pokok"
+                ],
+                correctAnswer: 0,
+                explanation: "Masyarakat Jahiliyah menyembah berhala batu dan kayu."
+            },
+            {
+                id: 31,
+                level: 4,
+                type: "mcq",
+                promptRumi: "Apakah amalan buruk masyarakat Arab Jahiliyah terhadap bayi perempuan yang baru lahir?",
+                promptJawi: "مشاركت عرب جاهيلية (منجوال / ممبونوه) انق قرمقوان يع دلاهير كن.",
+                options: [
+                    "Membunuh / menanam hidup-hidup",
+                    "Menjual ke negeri lain",
+                    "Mendidik dengan mulia",
+                    "Meraikan kelahiran"
+                ],
+                correctAnswer: 0,
+                explanation: "Masyarakat Jahiliyah menanam dan membunuh bayi perempuan kerana merasa malu."
+            },
+            {
+                id: 32,
+                level: 4,
+                type: "mcq",
+                promptRumi: "Nabi Muhammad SAW sangat dihormati oleh masyarakat Mekah kerana sifat Baginda yang...",
+                promptJawi: "نبي محمد دحرمتي مشرکت کران (سوفن / کارغ) کتیک بر چاکف.",
+                options: [
+                    "Sopan dan jujur",
+                    "Garang dan kasar",
+                    "Sombong",
+                    "Pemarah"
+                ],
+                correctAnswer: 0,
+                explanation: "Nabi bersikap sopan dan dikenali sebagai Al-Amin."
+            },
+            {
+                id: 33,
+                level: 4,
+                type: "mcq",
+                promptRumi: "Abu Lahab dan isterinya sentiasa ______ dakwah Rasulullah SAW.",
+                promptJawi: "أبو لهب دان ايسترين سنتياس (ممبنتو / مننتع) دعوه نبي محمد.",
+                options: [
+                    "Menentang",
+                    "Membantu",
+                    "Mendukung",
+                    "Memuji"
+                ],
+                correctAnswer: 0,
+                explanation: "Abu Lahab dan isterinya merupakan penentang kuat dakwah Nabi."
+            },
+            {
+                id: 34,
+                level: 4,
+                type: "mcq",
+                promptRumi: "Nabi Muhammad SAW sentiasa ______ tawaran orang kafir untuk menyembah berhala.",
+                promptJawi: "نبي محمد (منريما / منولق) تاورن اورغ کافر اونتوق ميمبه برهالا.",
+                options: [
+                    "Menolak",
+                    "Menerima",
+                    "Mempertimbangkan",
+                    "Bersetuju"
+                ],
+                correctAnswer: 0,
+                explanation: "Baginda tegas menolak sebarang bentuk syirik."
+            },
+
+            // ----------------------------------------------------------------------
+            // TAHAP 5: AL-QURAN DAN TAJWID (8 Soalan)
+            // ----------------------------------------------------------------------
+            {
+                id: 35,
+                level: 5,
+                type: "matching",
+                promptRumi: "Padankan hukum Tajwid bagi potongan kalimah: 'مَنْ ثَقُلَتْ' (Nun Mati bertemu Tha)",
+                promptJawi: "مَنْ ثَقُلَتْ",
+                options: [
+                    "Ikhfa' Haqiqi",
+                    "Izhar Halqi",
+                    "Iqlab",
+                    "Idgham Maal Ghunnah"
+                ],
+                correctAnswer: 0,
+                explanation: "Nun Sakinah bertemu huruf Tha ialah hukum Ikhfa' Haqiqi."
+            },
+            {
+                id: 36,
+                level: 5,
+                type: "matching",
+                promptRumi: "Padankan hukum Tajwid bagi potongan kalimah: 'مِنْ رَّحِيقٍ' (Nun Mati bertemu Ra)",
+                promptJawi: "مِنْ رَّحِيقٍ",
+                options: [
+                    "Idgham Bila Ghunnah",
+                    "Idgham Maal Ghunnah",
+                    "Iqlab",
+                    "Izhar Halqi"
+                ],
+                correctAnswer: 0,
+                explanation: "Nun Sakinah bertemu huruf Ra (ر) ialah Idgham Bila Ghunnah."
+            },
+            {
+                id: 37,
+                level: 5,
+                type: "matching",
+                promptRumi: "Padankan hukum Tajwid bagi potongan kalimah: 'مِنْ عَيْنٍ' (Nun Mati bertemu 'Ain)",
+                promptJawi: "مِنْ عَيْنٍ",
+                options: [
+                    "Izhar Halqi",
+                    "Iqlab",
+                    "Ikhfa' Haqiqi",
+                    "Idgham Maal Ghunnah"
+                ],
+                correctAnswer: 0,
+                explanation: "Nun Sakinah bertemu huruf Halqi ('Ain) ialah Izhar Halqi (dibaca jelas)."
+            },
+            {
+                id: 38,
+                level: 5,
+                type: "matching",
+                promptRumi: "Padankan hukum Tajwid bagi potongan kalimah: 'مِنْ بَقْلِهَا' (Nun Mati bertemu Ba)",
+                promptJawi: "مِنْ بَقْلِهَا",
+                options: [
+                    "Iqlab",
+                    "Ikhfa' Haqiqi",
+                    "Izhar Halqi",
+                    "Idgham Bila Ghunnah"
+                ],
+                correctAnswer: 0,
+                explanation: "Nun Sakinah bertemu Ba (ب) ialah Iqlab (ditukar bunyi Mim)."
+            },
+            {
+                id: 39,
+                level: 5,
+                type: "matching",
+                promptRumi: "Padankan hukum Tajwid bagi potongan kalimah: 'مَنْ يَشَاءُ' (Nun Mati bertemu Ya)",
+                promptJawi: "مَنْ يَشَاءُ",
+                options: [
+                    "Idgham Maal Ghunnah",
+                    "Idgham Bila Ghunnah",
+                    "Iqlab",
+                    "Izhar Halqi"
+                ],
+                correctAnswer: 0,
+                explanation: "Nun Sakinah bertemu Ya (ي) ialah Idgham Maal Ghunnah."
+            },
+            {
+                id: 40,
+                level: 5,
+                type: "mcq",
+                promptRumi: "Lengkapkan ayat Surah Al-Asr (Ayat 1): 'وَالْعَصْرِ (1) إِنَّ الْإِنسَانَ لَفِي خُسْرٍ (2) إِلاَّ الَّذِينَ ءَامَنُوا وَعَمِلُوا...' ",
+                promptJawi: "وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا ______",
+                options: [
+                    "بِالصَّبْرِ (bis-sabr)",
+                    "بِالْمَرْحَمَةِ",
+                    "بِالْبِرِّ",
+                    "بِالـتَّقْوَى"
+                ],
+                correctAnswer: 0,
+                explanation: "Ayat ke-3 Surah Al-Asr diakhiri dengan perkataan 'بِالصَّبْرِ'."
+            },
+            {
+                id: 41,
+                level: 5,
+                type: "true_false",
+                promptRumi: "Surah Al-Asr mengandungi 3 ayat dan menekankan kepentingan menghargai masa.",
+                promptJawi: "سورة العصر مغاندوغي 3 اية.",
+                correctAnswer: true,
+                explanation: "Surah Al-Asr mempunyai 3 ayat tentang kerugian manusia yang mensia-siakan masa."
+            },
+            {
+                id: 42,
+                level: 5,
+                type: "mcq",
+                promptRumi: "Huruf Izhar Halqi terdiri daripada 6 huruf iaitu ء, هـ, ع, غ, ح dan...",
+                promptJawi: "حروف إظهار حلقي خ, ح, ع, غ, هـ دان...",
+                options: [
+                    "خ (Kha)",
+                    "ب (Ba)",
+                    "م (Mim)",
+                    "ر (Ra)"
+                ],
+                correctAnswer: 0,
+                explanation: "Huruf Izhar Halqi ialah ء, هـ, ع, غ, ح, خ."
+            },
+
+            // ----------------------------------------------------------------------
+            // TAHAP 6: JAWI (8 Soalan)
+            // ----------------------------------------------------------------------
+            {
+                id: 43,
+                level: 6,
+                type: "sorting",
+                promptRumi: "Susun perkataan Jawi berikut menjadi ayat yang betul: 'Kami menyambut tetamu dengan mesra.'",
+                promptJawi: "كامي * مسرا * tetamu -> كيوك",
+                words: ["كامي", "مڽمبوت", "تتَامو", "دڠن", "مسرا"],
+                correctOrder: ["كامي", "مڽمبوت", "تتَامو", "دڠن", "مسرا"],
+                explanation: "Ayat Jawi yang betul: كامي مڽمبوت تتَامو دڠن مسرا."
+            },
+            {
+                id: 44,
+                level: 6,
+                type: "sorting",
+                promptRumi: "Susun perkataan Jawi berikut menjadi ayat yang betul: 'Ibu menghidang makanan kepada tetamu.'",
+                promptJawi: "ايبو * مغهيدغ * ماكنن * كفد * تتامو",
+                words: ["ايبو", "مغهيدغ", "ماكنن", "كفد", "تتامو"],
+                correctOrder: ["ايبو", "مغهيدغ", "ماكنن", "كفد", "تتامو"],
+                explanation: "Ayat Jawi yang betul: ايبو مغهيدغ ماكنن كفد تتامو."
+            },
+            {
+                id: 45,
+                level: 6,
+                type: "sorting",
+                promptRumi: "Susun perkataan Jawi berikut menjadi ayat yang betul: 'Adik menyimpan mainan di dalam kotak.'",
+                promptJawi: "اديق * مڽيمفن * ماءينن * ددالم * كوتق",
+                words: ["اديق", "مڽيمفن", "ماءينن", "ددالم", "كوتق"],
+                correctOrder: ["اديق", "مڽيمفن", "ماءينن", "ددالم", "كوتق"],
+                explanation: "Ayat Jawi yang betul: اديق مڽيمفن ماءينن ددالم كوتق."
+            },
+            {
+                id: 46,
+                level: 6,
+                type: "sorting",
+                promptRumi: "Susun perkataan Jawi berikut menjadi ayat yang betul: 'Murid sedang beratur di tapak perhimpunan.'",
+                promptJawi: "موريد * سدغ * براتور * دتافق * فرهيمفونن",
+                words: ["موريد", "سدغ", "براتور", "دتافق", "فرهيمفونن"],
+                correctOrder: ["موريد", "سدغ", "براتور", "دتافق", "فرهيمفونن"],
+                explanation: "Ayat Jawi yang betul: موريد سدغ براتور دتافق فرهيمفونن."
+            },
+            {
+                id: 47,
+                level: 6,
+                type: "sorting",
+                promptRumi: "Susun perkataan Jawi berikut menjadi ayat yang betul: 'Pasukan kami memenangi perlawanan bola sepak.'",
+                promptJawi: "فاسوقن * كامي * ممنغي * فرلاونن * بولا سيفق",
+                words: ["فاسوقن", "كامي", "ممنغي", "فرلاونن", "بۆلا سيفق"],
+                correctOrder: ["فاسوقن", "كامي", "ممنغي", "فرلاونن", "بۆلا سيفق"],
+                explanation: "Ayat Jawi yang betul: فاسوقن كامي ممنغي فرلاونن بۆلا سيفق."
+            },
+            {
+                id: 48,
+                level: 6,
+                type: "mcq",
+                promptRumi: "Apakah ejaan Jawi yang betul bagi perkataan Rumi: 'SEKOLAH'?",
+                promptJawi: "ايجاءن جاوي باضي 'SEKOLAH'",
+                options: [
+                    "سكوله",
+                    "سيكوله",
+                    "سيكولاه",
+                    "سكولاه"
+                ],
+                correctAnswer: 0,
+                explanation: "Perkataan 'Sekolah' dieja س-ك-و-ل-ه (سكوله)."
+            },
+            {
+                id: 49,
+                level: 6,
+                type: "mcq",
+                promptRumi: "Apakah ejaan Jawi yang betul bagi perkataan Rumi: 'MASJID'?",
+                promptJawi: "ايجاءن جاوي باضي 'MASJID'",
+                options: [
+                    "مسجد",
+                    "ماسجيد",
+                    "مسيجد",
+                    "مسجيد"
+                ],
+                correctAnswer: 0,
+                explanation: "Perkataan serapan Arab 'Masjid' dieja م-س-ج-د (مسجد)."
+            },
+            {
+                id: 50,
+                level: 6,
+                type: "true_false",
+                promptRumi: "Huruf Jawi ditulis dan dibaca bermula dari sebelah kanan ke kiri.",
+                promptJawi: "توليسن جاوي دمولاكن دري كانن ككيري.",
+                correctAnswer: true,
+                explanation: "Tulisan Jawi berasaskan skrip Arab dan ditulis dari kanan ke kiri."
+            }
+        ];
+
+        const levelData = [
+            { id: 1, title: "Akhlak dan Adab", icon: "🌸", bg: "from-pink-500 to-rose-600", badge: "🥇 Lencana Akhlak", questionCount: 8 },
+            { id: 2, title: "Akidah", icon: "⭐", bg: "from-amber-500 to-yellow-600", badge: "🥇 Lencana Akidah", questionCount: 8 },
+            { id: 3, title: "Ibadah", icon: "🕌", bg: "from-emerald-500 to-teal-600", badge: "🥇 Lencana Ibadah", questionCount: 10 },
+            { id: 4, title: "Sirah dan Sunnah", icon: "📜", bg: "from-blue-500 to-indigo-600", badge: "🥇 Lencana Sirah", questionCount: 8 },
+            { id: 5, title: "Al-Quran & Tajwid", icon: "📖", bg: "from-purple-500 to-violet-600", badge: "🥇 Lencana Tajwid", questionCount: 8 },
+            { id: 6, title: "Jawi", icon: "✏️", bg: "from-cyan-500 to-blue-600", badge: "🥇 Lencana Jawi", questionCount: 8 }
+        ];
+
+        let gameState = {
+            playerName: "",
+            playerClass: "",
+            currentLevel: 1,
+            currentQuestionIndexInLevel: 0,
+            levelScores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+            unlockedLevels: [1],
+            completedLevels: [],
+            totalScore: 0,
+            activeLevelAttemptScores: {},
+            shuffledQuestionOptions: {}, // Stores shuffled options per question per session
+            soundEnabled: true,
+            speechEnabled: true
+        };
+
+        // Utility: Fisher-Yates Shuffle Algorithm for Option Shuffling
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Centralized calculation function for single source of truth
+        function recalculateTotalScore() {
+            let sum = 0;
+            Object.values(gameState.levelScores).forEach(s => {
+                sum += (typeof s === 'number') ? s : 0;
+            });
+            
+            if (sum > 500) sum = 500;
+            if (sum < 0) sum = 0;
+            
+            gameState.totalScore = sum;
+            return gameState.totalScore;
+        }
+
+        function initiateLevelSession(levelId) {
+            gameState.currentLevel = levelId;
+            gameState.currentQuestionIndexInLevel = 0;
+            gameState.activeLevelAttemptScores = {}; 
+            
+            // Re-shuffle options ONLY for questions that require option shuffling (MCQ, matching, categorize)
+            // DO NOT shuffle or modify True/False questions!
+            const levelQuestions = questionBank.filter(q => q.level === levelId);
+            levelQuestions.forEach(q => {
+                if (q.type === 'mcq' || q.type === 'matching' || q.type === 'categorize') {
+                    // Map options with their original text and explicit correct flag
+                    const structuredOptions = q.options.map((optText, idx) => ({
+                        text: optText,
+                        isCorrect: (idx === q.correctAnswer)
+                    }));
+                    // Perform Fisher-Yates Shuffle
+                    gameState.shuffledQuestionOptions[q.id] = shuffleArray(structuredOptions);
+                }
+            });
+
+            currentLevelQuestions = levelQuestions;
+            showScreen('screenGame');
+            loadQuestion();
+        }
+
+        let currentLevelQuestions = [];
+        let currentQuestion = null;
+        let isAnswerSubmittedCurrentQuestion = false;
+        let userSortedWords = [];
+
+        function loadQuestion() {
+            isAnswerSubmittedCurrentQuestion = false;
+            userSortedWords = [];
+            
+            const feedbackCard = document.getElementById('feedbackCard');
+            feedbackCard.classList.add('hidden');
+            document.getElementById('btnNextQuestion').classList.add('hidden');
+
+            const totalInLvl = currentLevelQuestions.length;
+            const currentIdx = gameState.currentQuestionIndexInLevel;
+
+            if (currentIdx >= totalInLvl) {
+                completeCurrentLevelAttempt();
+                return;
+            }
+
+            currentQuestion = currentLevelQuestions[currentIdx];
+            const meta = levelData.find(l => l.id === gameState.currentLevel);
+
+            // Update Status UI
+            document.getElementById('levelBadgeIcon').innerText = meta.icon;
+            document.getElementById('gameLevelTitle').innerText = `TAHAP ${meta.id}`;
+            document.getElementById('gameCategoryName').innerText = meta.title;
+            document.getElementById('gameProgressText').innerText = `${currentIdx + 1} / ${totalInLvl}`;
+            
+            let activeAttemptScore = 0;
+            Object.values(gameState.activeLevelAttemptScores).forEach(sc => activeAttemptScore += sc);
+            document.getElementById('gameCurrentScore').innerText = `${activeAttemptScore} / ${totalInLvl * 10}`;
+
+            const pct = ((currentIdx) / totalInLvl) * 100;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+
+            document.getElementById('questionPromptRumi').innerText = currentQuestion.promptRumi;
+            const jawiEl = document.getElementById('questionPromptJawi');
+            if (currentQuestion.promptJawi) {
+                jawiEl.innerText = currentQuestion.promptJawi;
+                jawiEl.classList.remove('hidden');
+            } else {
+                jawiEl.classList.add('hidden');
+            }
+
+            const badgeType = document.getElementById('questionTypeBadge');
+            if (currentQuestion.type === 'mcq') badgeType.innerText = 'Pilihan Jawapan';
+            else if (currentQuestion.type === 'true_false') badgeType.innerText = 'Betul / Salah';
+            else if (currentQuestion.type === 'matching') badgeType.innerText = 'Padankan Jawapan';
+            else if (currentQuestion.type === 'categorize') badgeType.innerText = 'Kelaskan Jawapan';
+            else if (currentQuestion.type === 'sorting') badgeType.innerText = 'Susun Perkataan';
+
+            const area = document.getElementById('interactiveArea');
+            area.innerHTML = '';
+
+            if (currentQuestion.type === 'mcq' || currentQuestion.type === 'matching' || currentQuestion.type === 'categorize') {
+                renderMCQOptions(area);
+            } else if (currentQuestion.type === 'true_false') {
+                renderTrueFalseOptions(area);
+            } else if (currentQuestion.type === 'sorting') {
+                renderSortingOptions(area);
+            }
+
+            if (gameState.speechEnabled) {
+                speakQuestionText();
+            }
+        }
+
+        function speakQuestionText() {
+            speakText(currentQuestion.promptRumi);
+        }
+
+        // Render MCQ Options using stored Fisher-Yates shuffled order
+        function renderMCQOptions(container) {
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-1 md:grid-cols-2 gap-3 w-full";
+
+            // Retrieve shuffled options or generate if missing
+            let displayOptions = gameState.shuffledQuestionOptions[currentQuestion.id];
+            if (!displayOptions) {
+                const structuredOptions = currentQuestion.options.map((optText, idx) => ({
+                    text: optText,
+                    isCorrect: (idx === currentQuestion.correctAnswer)
+                }));
+                displayOptions = shuffleArray(structuredOptions);
+                gameState.shuffledQuestionOptions[currentQuestion.id] = displayOptions;
+            }
+
+            displayOptions.forEach((optObj, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "btn-bounce bg-white hover:bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-4 text-left font-bold text-slate-800 flex items-center gap-3 transition shadow-sm hover:border-indigo-400";
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 font-extrabold flex items-center justify-center shrink-0 border border-indigo-200">
+                        ${String.fromCharCode(65 + idx)}
+                    </span>
+                    <span class="text-sm md:text-base">${optObj.text}</span>
+                `;
+                // Pass user choice value directly (optObj.isCorrect) to handleMCQAnswer
+                btn.onclick = () => submitAnswer(optObj.isCorrect, btn);
+                grid.appendChild(btn);
+            });
+
+            container.appendChild(grid);
+        }
+
+        function renderTrueFalseOptions(container) {
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto w-full";
+
+            // BETUL Button (Green) - Sends boolean true as user's chosen answer
+            const btnTrue = document.createElement('button');
+            btnTrue.className = "btn-bounce bg-emerald-500 hover:bg-emerald-600 text-white font-black py-5 px-6 rounded-2xl text-xl shadow-lg flex items-center justify-center gap-3 border-b-4 border-emerald-700";
+            btnTrue.innerHTML = `<i class="fas fa-check-circle text-2xl text-white"></i> <span class="text-white drop-shadow">BETUL (صحيح)</span>`;
+            btnTrue.onclick = () => submitAnswer(true, btnTrue);
+
+            // SALAH Button (Red) - Sends boolean false as user's chosen answer
+            const btnFalse = document.createElement('button');
+            btnFalse.className = "btn-bounce bg-rose-500 hover:bg-rose-600 text-white font-black py-5 px-6 rounded-2xl text-xl shadow-lg flex items-center justify-center gap-3 border-b-4 border-rose-700";
+            btnFalse.innerHTML = `<i class="fas fa-times-circle text-2xl text-white"></i> <span class="text-white drop-shadow">SALAH (خطأ)</span>`;
+            btnFalse.onclick = () => submitAnswer(false, btnFalse);
+
+            grid.appendChild(btnTrue);
+            grid.appendChild(btnFalse);
+            container.appendChild(grid);
+        }
+
+        function renderSortingOptions(container) {
+            const wrapper = document.createElement('div');
+            wrapper.className = "flex flex-col items-center gap-4 w-full";
+
+            const targetBox = document.createElement('div');
+            targetBox.id = "sortingTargetBox";
+            targetBox.className = "w-full min-h-[70px] bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-2xl p-3 flex flex-wrap justify-end gap-2 items-center font-jawi text-xl";
+            
+            const sourceBox = document.createElement('div');
+            sourceBox.id = "sortingSourceBox";
+            sourceBox.className = "flex flex-wrap justify-center gap-2 mt-2 font-jawi text-xl";
+
+            const shuffled = [...currentQuestion.words].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((word) => {
+                const tag = document.createElement('button');
+                tag.className = "btn-bounce bg-white border-2 border-indigo-200 hover:border-indigo-500 px-4 py-2 rounded-xl text-indigo-950 font-bold shadow-sm";
+                tag.innerText = word;
+                tag.onclick = () => handleSortWordClick(word, tag, targetBox, sourceBox);
+                sourceBox.appendChild(tag);
+            });
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = "btn-bounce mt-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold py-2.5 px-6 rounded-xl text-base shadow border-b-4 border-orange-700";
+            confirmBtn.innerText = "Semak Jawapan Jawi";
+            confirmBtn.onclick = () => checkSortingAnswer(confirmBtn);
+
+            wrapper.appendChild(targetBox);
+            wrapper.appendChild(sourceBox);
+            wrapper.appendChild(confirmBtn);
+            container.appendChild(wrapper);
+        }
+
+        function handleSortWordClick(word, btnEl, targetBox, sourceBox) {
+            if (isAnswerSubmittedCurrentQuestion) return;
+            if (btnEl.parentElement === sourceBox) {
+                targetBox.appendChild(btnEl);
+                userSortedWords.push(word);
+            } else {
+                sourceBox.appendChild(btnEl);
+                userSortedWords = userSortedWords.filter(w => w !== word);
+            }
+        }
+
+        function checkSortingAnswer(btn) {
+            const isCorrect = JSON.stringify(userSortedWords) === JSON.stringify(currentQuestion.correctOrder);
+            submitAnswer(isCorrect, btn);
+        }
+
+        function submitAnswer(userChoice, btnEl) {
+            if (isAnswerSubmittedCurrentQuestion) return;
+            isAnswerSubmittedCurrentQuestion = true;
+
+            let isCorrect = false;
+
+            // Handle True/False and direct comparison vs boolean correctness
+            if (currentQuestion.type === 'true_false') {
+                // Strict boolean comparison between user choice and question's correctAnswer
+                isCorrect = (userChoice === currentQuestion.correctAnswer);
+            } else {
+                // For MCQ and other types where userChoice passes boolean isCorrect directly
+                isCorrect = Boolean(userChoice);
+            }
+
+            const qId = currentQuestion.id;
+            gameState.activeLevelAttemptScores[qId] = isCorrect ? 10 : 0;
+
+            if (isCorrect) {
+                playSound('correct');
+            } else {
+                playSound('wrong');
+            }
+
+            // Disable all interactive buttons without changing text labels or destroying layout
+            const interactiveBtns = document.getElementById('interactiveArea').querySelectorAll('button');
+            interactiveBtns.forEach(b => {
+                b.disabled = true;
+                b.classList.add('btn-option-disabled');
+            });
+
+            const feedbackCard = document.getElementById('feedbackCard');
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            const feedbackText = document.getElementById('feedbackText');
+
+            feedbackCard.classList.remove('hidden', 'bg-emerald-100', 'border-emerald-400', 'text-emerald-900', 'bg-rose-100', 'border-rose-400', 'text-rose-900');
+
+            if (isCorrect) {
+                feedbackCard.classList.add('bg-emerald-100', 'border-emerald-400', 'text-emerald-900');
+                feedbackTitle.innerText = "🎉 JAWAPAN BETUL! (+10 Mata)";
+                feedbackText.innerText = currentQuestion.explanation || "Syabas! Kamu menjawab dengan tepat.";
+            } else {
+                feedbackCard.classList.add('bg-rose-100', 'border-rose-400', 'text-rose-900');
+                feedbackTitle.innerText = "❌ JAWAPAN KURANG TEPAT";
+                feedbackText.innerText = `${currentQuestion.explanation || "Jangan putus asa, cuba lagi di soalan seterusnya!"}`;
+            }
+
+            let activeAttemptScore = 0;
+            Object.values(gameState.activeLevelAttemptScores).forEach(sc => activeAttemptScore += sc);
+            const totalInLvl = currentLevelQuestions.length;
+            document.getElementById('gameCurrentScore').innerText = `${activeAttemptScore} / ${totalInLvl * 10}`;
+
+            document.getElementById('btnNextQuestion').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestionIndexInLevel++;
+            loadQuestion();
+        }
+
+        function quitToMap() {
+            if (confirm("Adakah kamu mahu kembali ke Peta Misi? Kemajuan percubaan ini tidak akan merosakkan markah asal.")) {
+                renderLevelMap();
+                showScreen('screenLevelMap');
+            }
+        }
+
+        function completeCurrentLevelAttempt() {
+            const lvlId = gameState.currentLevel;
+            
+            let attemptTotalScore = 0;
+            Object.values(gameState.activeLevelAttemptScores).forEach(sc => attemptTotalScore += sc);
+
+            gameState.levelScores[lvlId] = attemptTotalScore;
+
+            if (!gameState.completedLevels.includes(lvlId)) {
+                gameState.completedLevels.push(lvlId);
+            }
+
+            if (lvlId < 6 && !gameState.unlockedLevels.includes(lvlId + 1)) {
+                gameState.unlockedLevels.push(lvlId + 1);
+            }
+
+            saveProgress();
+            finishLevel(false);
+        }
+
+        function finishLevel(isReadOnlyView = false) {
+            const meta = levelData.find(l => l.id === gameState.currentLevel);
+            const score = gameState.levelScores[gameState.currentLevel] || 0;
+            const maxScore = meta.questionCount * 10;
+
+            if (!isReadOnlyView) {
+                playSound('levelComplete');
+                try {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                } catch(e) {}
+            }
+
+            document.getElementById('badgeEarnedDisplay').innerText = meta.badge;
+            document.getElementById('levelScoreDisplay').innerText = `${score} / ${maxScore}`;
+            
+            recalculateTotalScore();
+            document.getElementById('totalScoreDisplay').innerText = `${gameState.totalScore} / 500`;
+
+            showScreen('screenLevelComplete');
+        }
+
+        function goToNextLevelOrFinish() {
+            if (gameState.currentLevel < 6) {
+                initiateLevelSession(gameState.currentLevel + 1);
+            } else {
+                showFinalResultsScreen();
+            }
+        }
+
+        function showFinalResultsScreen() {
+            recalculateTotalScore();
+
+            const percentage = Math.min(100, Math.round((gameState.totalScore / 500) * 100));
+            const correctCount = Math.min(50, Math.round(gameState.totalScore / 10));
+
+            document.getElementById('finalScoreText').innerText = `${gameState.totalScore} / 500`;
+            document.getElementById('finalPercentageText').innerText = `${percentage}%`;
+            document.getElementById('finalCorrectText').innerText = `${correctCount} / 50`;
+
+            let rank = "Pahlawan Mumtaz";
+            if (percentage >= 90) rank = "🏆 Pahlawan Mumtaz (Cemerlang)";
+            else if (percentage >= 75) rank = "🥇 Pahlawan Jayyid Jiddan (Sangat Baik)";
+            else if (percentage >= 60) rank = "🥈 Pahlawan Jayyid (Baik)";
+            else rank = "🥉 Pahlawan Maqbul (Lulus)";
+
+            document.getElementById('finalRankText').innerText = rank;
+
+            document.getElementById('certPlayerName').innerText = gameState.playerName;
+            document.getElementById('certPlayerClass').innerText = `Kelas: ${gameState.playerClass}`;
+            document.getElementById('certScoreDisplay').innerText = `${gameState.totalScore} / 500 (${percentage}%)`;
+            document.getElementById('certBadgeTitle').innerText = rank.toUpperCase();
+            
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('ms-MY', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('certDateDisplay').innerText = dateStr;
+
+            showScreen('screenFinalResults');
+
+            try {
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+            } catch(e) {}
+        }
+
+        function restartEntireGame() {
+            if (confirm("Adakah kamu mahu memulakan semula keseluruhan permainan? Semua lencana dan markah akan direset.")) {
+                gameState.currentLevel = 1;
+                gameState.levelScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+                gameState.completedLevels = [];
+                gameState.unlockedLevels = [1];
+                gameState.totalScore = 0;
+                gameState.activeLevelAttemptScores = {};
+                gameState.shuffledQuestionOptions = {};
+                saveProgress();
+                renderLevelMap();
+                showScreen('screenLevelMap');
+            }
+        }
+
+        function downloadCertificate() {
+            const certArea = document.getElementById('certificateContainer');
+            if (typeof html2canvas !== 'undefined') {
+                html2canvas(certArea, { scale: 2 }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `Sijil_Pahlawan_Ilmu_${gameState.playerName.replace(/\s+/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            } else {
+                alert("Sistem penjanaan gambar sijil sedang dimuatkan.");
+            }
+        }
+
+        function shareResults() {
+            recalculateTotalScore();
+            const shareText = `🕌 *MISI PAHLAWAN ILMU - UASA 2026*\n\nSaya (${gameState.playerName} - ${gameState.playerClass}) telah berjaya menamatkan Pentaksiran UASA Pendidikan Islam Tahun 3 dengan markah *${gameState.totalScore}/500*! 🌟\n\nJom sertai Misi Pahlawan Ilmu!`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Misi Pahlawan Ilmu',
+                    text: shareText,
+                }).catch(() => {});
+            } else {
+                const dummy = document.createElement("textarea");
+                document.body.appendChild(dummy);
+                dummy.value = shareText;
+                dummy.select();
+                document.execCommand("copy");
+                document.body.removeChild(dummy);
+                alert("Keputusan telah disalin ke papan keratan (clipboard)! Kamu boleh menampalnya di WhatsApp.");
+            }
+        }
+
+        function toggleMusic() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById('iconMusic');
+            if (gameState.soundEnabled) {
+                icon.className = "fas fa-music";
+                playSound('correct');
+            } else {
+                icon.className = "fas fa-volume-mute";
+            }
+            saveProgress();
+        }
+
+        function toggleSpeech() {
+            gameState.speechEnabled = !gameState.speechEnabled;
+            const icon = document.getElementById('iconSpeech');
+            if (gameState.speechEnabled) {
+                icon.className = "fas fa-volume-up";
+                speakText("Suara pembacaan diaktifkan.");
+            } else {
+                icon.className = "fas fa-volume-off";
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+            saveProgress();
+        }
+
+        function showHelpModal() {
+            document.getElementById('modalHelp').classList.remove('hidden');
+        }
+
+        function closeHelpModal() {
+            document.getElementById('modalHelp').classList.add('hidden');
+        }
+
+        window.onload = function() {
+            loadProgress();
+            if (gameState.playerName) {
+                document.getElementById('inputPlayerName').value = gameState.playerName;
+                document.getElementById('inputPlayerClass').value = gameState.playerClass || '';
+            }
+        };
+
+
+        // Screen Navigation Manager
+        function showScreen(screenId) {
+            const screens = ['screenMenu', 'screenLevelMap', 'screenGame', 'screenLevelComplete', 'screenFinalResults'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (id === screenId) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Game Initialization & Player Data Handlers
+        function startNewGame() {
+            const nameInput = document.getElementById('inputPlayerName').value.trim();
+            const classInput = document.getElementById('inputPlayerClass').value.trim();
+
+            if (!nameInput) {
+                alert("Sila masukkan nama pahlawan kamu terlebih dahulu!");
+                return;
+            }
+
+            gameState.playerName = nameInput;
+            gameState.playerClass = classInput || "Tahun 3";
+
+            // Update Header & Badge Display
+            document.getElementById('headerPlayerName').innerText = gameState.playerName;
+            document.getElementById('playerBadge').classList.remove('hidden');
+
+            saveProgress();
+            renderLevelMap();
+            showScreen('screenLevelMap');
+        }
+
+        function resumeGame() {
+            if (!gameState.playerName) return;
+            document.getElementById('headerPlayerName').innerText = gameState.playerName;
+            document.getElementById('playerBadge').classList.remove('hidden');
+            renderLevelMap();
+            showScreen('screenLevelMap');
+        }
+
+        // Render Interactive Level Selection Grid
+        function renderLevelMap() {
+            recalculateTotalScore();
+
+            document.getElementById('mapPlayerInfo').innerText = `${gameState.playerName} (${gameState.playerClass})`;
+            document.getElementById('mapTotalScore').innerText = `${gameState.totalScore} / 500`;
+
+            const grid = document.getElementById('levelGrid');
+            grid.innerHTML = '';
+
+            levelData.forEach(lvl => {
+                const isUnlocked = gameState.unlockedLevels.includes(lvl.id);
+                const isCompleted = gameState.completedLevels.includes(lvl.id);
+                const score = gameState.levelScores[lvl.id] || 0;
+                const maxScore = lvl.questionCount * 10;
+
+                const card = document.createElement('div');
+                card.className = `rounded-2xl p-5 text-white flex flex-col justify-between transition-all duration-300 shadow-lg ${
+                    isUnlocked 
+                        ? `bg-gradient-to-br ${lvl.bg} cursor-pointer hover:scale-105 hover:shadow-2xl` 
+                        : 'bg-slate-400 opacity-60 cursor-not-allowed'
+                }`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-3xl">${lvl.icon}</span>
+                            <span class="text-xs font-black uppercase px-2.5 py-1 rounded-full ${
+                                isCompleted ? 'bg-amber-400 text-slate-900' : isUnlocked ? 'bg-white/20 text-white' : 'bg-slate-600 text-slate-200'
+                            }">
+                                ${isCompleted ? '✓ Selesai' : isUnlocked ? 'Terbuka' : 'Terkunci'}
+                            </span>
+                        </div>
+                        <p class="text-xs font-bold text-white/80 uppercase">Tahap ${lvl.id}</p>
+                        <h4 class="text-xl font-black mb-1">${lvl.title}</h4>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-white/20 flex justify-between items-center">
+                        <span class="text-xs font-bold">${score} / ${maxScore} Mata</span>
+                        <i class="fas ${isCompleted ? 'fa-check-circle text-amber-300 text-lg' : isUnlocked ? 'fa-play-circle text-white text-lg' : 'fa-lock text-slate-300'}"></i>
+                    </div>
+                `;
+
+                if (isUnlocked) {
+                    card.onclick = () => onLevelCardClick(lvl.id);
+                }
+
+                grid.appendChild(card);
+            });
+
+            // Toggle view final results button on map if all 6 levels completed
+            const btnFinalResults = document.getElementById('btnViewFinalResultsFromMap');
+            if (gameState.completedLevels.length >= 6) {
+                btnFinalResults.classList.remove('hidden');
+            } else {
+                btnFinalResults.classList.add('hidden');
+            }
+
+            // Enable/disable resume button on start menu
+            const btnResume = document.getElementById('btnResume');
+            if (gameState.playerName) {
+                btnResume.disabled = false;
+                btnResume.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Level Click Modal & Action Handlers
+        let selectedLevelForModal = null;
+
+        function onLevelCardClick(lvlId) {
+            selectedLevelForModal = lvlId;
+            const meta = levelData.find(l => l.id === lvlId);
+
+            if (gameState.completedLevels.includes(lvlId)) {
+                // Show choice modal for replay or summary
+                document.getElementById('modalLevelIcon').innerText = meta.icon;
+                document.getElementById('modalLevelTitle').innerText = `Tahap ${meta.id}: ${meta.title}`;
+                document.getElementById('modalLevelScore').innerText = `${gameState.levelScores[lvlId] || 0} / ${meta.questionCount * 10}`;
+                document.getElementById('modalLevelAction').classList.remove('hidden');
+            } else {
+                initiateLevelSession(lvlId);
+            }
+        }
+
+        function closeLevelModal() {
+            document.getElementById('modalLevelAction').classList.add('hidden');
+        }
+
+        function viewLevelSummary() {
+            closeLevelModal();
+            if (selectedLevelForModal) {
+                gameState.currentLevel = selectedLevelForModal;
+                finishLevel(true);
+            }
+        }
+
+        function startLevelReplay() {
+            closeLevelModal();
+            if (selectedLevelForModal) {
+                initiateLevelSession(selectedLevelForModal);
+            }
+        }
+
+        // Audio & Speech Synthesis Handlers
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                    osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1); // A5
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.setValueAtTime(164.81, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                } else if (type === 'levelComplete') {
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12);
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.24);
+                    osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.36);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.6);
+                }
+            } catch(e) {}
+        }
+
+        function speakText(text) {
+            if (!gameState.speechEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ms-MY';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Local Storage Persistence
+        function saveProgress() {
+            try {
+                localStorage.setItem('pahlawan_ilmu_uasa_2026', JSON.stringify({
+                    playerName: gameState.playerName,
+                    playerClass: gameState.playerClass,
+                    levelScores: gameState.levelScores,
+                    unlockedLevels: gameState.unlockedLevels,
+                    completedLevels: gameState.completedLevels,
+                    soundEnabled: gameState.soundEnabled,
+                    speechEnabled: gameState.speechEnabled
+                }));
+            } catch(e) {}
+        }
+
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('pahlawan_ilmu_uasa_2026');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    gameState.playerName = data.playerName || '';
+                    gameState.playerClass = data.playerClass || '';
+                    gameState.levelScores = data.levelScores || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+                    gameState.unlockedLevels = data.unlockedLevels || [1];
+                    gameState.completedLevels = data.completedLevels || [];
+                    gameState.soundEnabled = data.soundEnabled !== undefined ? data.soundEnabled : true;
+                    gameState.speechEnabled = data.speechEnabled !== undefined ? data.speechEnabled : true;
+                    
+                    recalculateTotalScore();
+
+                    // Update settings icons
+                    const musicIcon = document.getElementById('iconMusic');
+                    if (musicIcon) musicIcon.className = gameState.soundEnabled ? "fas fa-music" : "fas fa-volume-mute";
+
+                    const speechIcon = document.getElementById('iconSpeech');
+                    if (speechIcon) speechIcon.className = gameState.speechEnabled ? "fas fa-volume-up" : "fas fa-volume-off";
+                }
+            } catch(e) {}
+        }
+
+        function confirmResetData() {
+            if (confirm("Adakah anda pasti mahu mereset semua rekod pahlawan dan markah?")) {
+                localStorage.removeItem('pahlawan_ilmu_uasa_2026');
+                location.reload();
+            }
+        }
